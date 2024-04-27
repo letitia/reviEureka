@@ -1,21 +1,34 @@
 import './assets/main.css'
 
-import { createApp, ref } from 'vue'
-// import App from './App.vue'
-// import router from './router'
+import { createApp } from 'vue'
+import axios from 'axios'
 
-// const app =
 createApp({
-  setup() {
-    const count = ref(0)
-    const incrementCount = () => {
-      count.value++
-    }
+  data() {
     return {
-      count,
-      incrementCount
+      productName: '',
+      searchResults: [],
+      selectedVideos: []
+    }
+  },
+  methods: {
+    async searchYoutube() {
+      console.log('TISHEntered searchYoutube')
+      try {
+        const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
+          params: {
+            part: 'snippet',
+            maxResults: 25,
+            q: `${this.productName} review`,
+            type: 'video',
+            key: import.meta.env.VITE_YOUTUBE_API_KEY
+          }
+        })
+        this.searchResults = response.data.items
+        // console.log('TISH this.searchResults', this.searchResults)
+      } catch (error) {
+        console.error(error)
+      }
     }
   }
 }).mount('#app')
-
-// app.use(router)
